@@ -83,7 +83,8 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPilhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilhaActionPerformed
-        // TODO add your handling code here:
+        Pilha pilha = new Pilha();
+        pilha.setDefaultCloseOperation( DISPOSE_ON_CLOSE );
     }//GEN-LAST:event_btnPilhaActionPerformed
 
     /**
