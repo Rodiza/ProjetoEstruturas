@@ -14,9 +14,11 @@ public class Pilha extends EngineFrame {
     private int[] elementosPilha;
     private int topo;
     
-    private GuiInputDialog inputDialog;
-    private GuiButton inputButton;
-    private GuiButton inputConfirm;
+    private GuiInputDialog inputPush;
+    private GuiButton push;
+    private GuiButton pop;
+    
+    private Rectangle contornoPilha;
     
     
     int x;
@@ -42,46 +44,58 @@ public class Pilha extends EngineFrame {
     
     @Override
     public void create() {
-        x = 350;
+        x = 500;
         y = 200;
         contador = 0;
         elementosPilha = new int[10];
         
-        inputButton = new GuiButton(x, y, 100, 100, "teste", this);
-        inputDialog = new GuiInputDialog("Inserir dados", 
+        push = new GuiButton(x, y, 100, 70, "Push", this);
+        pop = new GuiButton(x, y + 100, 100, 70, "Pop", this);
+        inputPush = new GuiInputDialog("Inserir dados", 
                 "Insira um elemento na pilha", "Cancelar", true, this);
+        
+        contornoPilha = new Rectangle(x - 350, y - 50 , 100, 300);
         
       
     }
 
     @Override
     public void update( double delta ) {
-        inputButton.update(delta);
-        inputDialog.update(delta);
+        push.update(delta);
+        pop.update(delta);
+        inputPush.update(delta);
         
         //abrir a aba de input
-        if(inputButton.isMousePressed()){
-            inputDialog.show();
+        if(push.isMousePressed()){
+            inputPush.show();
         }
         
         //fechar a aba de input
-        if ( inputDialog.isCloseButtonPressed() ) {
-            inputDialog.hide();
+        if ( inputPush.isCloseButtonPressed() ) {
+            inputPush.hide();
         }
         
         //push
-        if(inputDialog.isOkButtonPressed() || inputDialog.isEnterKeyPressed()){
-            elementosPilha[contador] = Integer.parseInt(inputDialog.getValue());
+        if(inputPush.isOkButtonPressed() || inputPush.isEnterKeyPressed()){
+            elementosPilha[contador] = Integer.parseInt(inputPush.getValue());
             contador++;
-            topo = Integer.parseInt(inputDialog.getValue());
-            inputDialog.hide();
+            topo = Integer.parseInt(inputPush.getValue());
+            inputPush.hide();
+        }
+        
+        //pop
+        if(pop.isMousePressed()){
+            //TODO
         }
     }
     
     @Override
     public void draw() {  
-        inputButton.draw();
-        inputDialog.draw();
+        push.draw();
+        pop.draw();
+        contornoPilha.draw(this, BLACK);
+        inputPush.draw();
+        
     }
     
     public static void main( String[] args ) {
