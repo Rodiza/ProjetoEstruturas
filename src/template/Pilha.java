@@ -128,14 +128,20 @@ public class Pilha extends EngineFrame {
         
         for(int i = 0; i < contador; i++){
             //Começar desenhando da base da pilha
-            double yPos = contorno.y + contorno.height - (i * tamanhoElemento);
+            double yPos = contorno.y + contorno.height - (i * tamanhoElemento) - tamanhoElemento;
             double xPos = contorno.x + (contornoPilha.width / 2);
             
+            //desenha o numero
             drawText(Integer.toString(elementosPilha[i]), 
-                    new Vector2(xPos, yPos),
+                    new Vector2(xPos - 10, yPos + 10),
                     20,
                     BLACK
                     );
+            
+            //desenha o contorno da pilha
+            drawRectangle(new Rectangle(contorno.x, 
+                    yPos,
+                    100, tamanhoElemento), BLACK);
         }
         
         
