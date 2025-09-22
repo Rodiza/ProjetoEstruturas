@@ -11,6 +11,8 @@ import br.com.davidbuzatto.jsge.math.Vector2;
  */
 public class Fila extends EngineFrame{
     
+    private int[] elementosFila;
+    
     
     public Fila(){
         super(
@@ -29,7 +31,7 @@ public class Fila extends EngineFrame{
     
     @Override
     public void create() {
-                
+         
     }
     
     @Override

@@ -83,7 +83,7 @@ public class Pilha extends EngineFrame {
             if(ehInt(inputPush.getValue())){
                 elementosPilha[contador] = Integer.parseInt(inputPush.getValue());
 
-                topo = Integer.parseInt(inputPush.getValue());
+                topo = elementosPilha[contador];
                 inputPush.hide();
 
                 ponto.y += 20;
@@ -95,7 +95,12 @@ public class Pilha extends EngineFrame {
         
         //pop
         if(pop.isMousePressed()){
-            contador--;
+            if(contador > 0){
+                contador--; 
+                topo = elementosPilha[contador - 1];
+            }else{
+                
+            }
         }
     }
     
@@ -106,7 +111,10 @@ public class Pilha extends EngineFrame {
         desenharPilha(contornoPilha, elementosPilha);
         inputPush.draw();
         
-        
+        drawText("Topo: " + Integer.toString(topo), 
+                new Vector2(150, 100),
+                20,
+                BLACK);
             
         
     }
