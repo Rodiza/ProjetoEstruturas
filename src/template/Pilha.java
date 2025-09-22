@@ -95,7 +95,7 @@ public class Pilha extends EngineFrame {
         
         //pop
         if(pop.isMousePressed()){
-            //TODO
+            contador--;
         }
     }
     
