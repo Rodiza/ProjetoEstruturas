@@ -99,7 +99,7 @@ public class Pilha extends EngineFrame {
                 contador--; 
                 topo = elementosPilha[contador - 1];
             }else{
-                
+                topo = 0;
             }
         }
     }
@@ -111,11 +111,14 @@ public class Pilha extends EngineFrame {
         desenharPilha(contornoPilha, elementosPilha);
         inputPush.draw();
         
-        drawText("Topo: " + Integer.toString(topo), 
-                new Vector2(150, 100),
-                20,
-                BLACK);
-            
+        
+        //so desenha o topo se tiver elemento
+        if(contador > 0){
+            drawText("Topo: " + Integer.toString(topo), 
+                    new Vector2(150, 100),
+                    20,
+                    BLACK);
+        }
         
     }
     
