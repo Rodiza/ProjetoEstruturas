@@ -13,14 +13,15 @@ import java.util.List;
 public class Pilha extends EngineFrame {
     
     private int[] elementosPilha;
+    int tamanhoFila;
     private int topo;
     
     private GuiInputDialog inputPush;
+    private GuiInputDialog inputTamanho;
     private GuiButton push;
     private GuiButton pop;
     
     private Rectangle contornoPilha;
-    private Vector2 ponto;
     
     
     private int x;
@@ -49,13 +50,16 @@ public class Pilha extends EngineFrame {
         x = 500;
         y = 200;
         contador = 0;
-        elementosPilha = new int[10];
-        
-        ponto = new Vector2(x, y);
+        elementosPilha = new int[30];
+       
         push = new GuiButton(x, y, 100, 70, "Push", this);
         pop = new GuiButton(x, y + 100, 100, 70, "Pop", this);
+        
         inputPush = new GuiInputDialog("Inserir dados", 
                 "Insira um elemento na pilha", "Cancelar", true, this);
+        inputTamanho = new GuiInputDialog("Inserir tamanho", 
+                "Insira o tamanho da fila",
+                "Cancelar", false, this);
         
         contornoPilha = new Rectangle(x - 350, y - 50 , 100, 300);
         
@@ -66,7 +70,9 @@ public class Pilha extends EngineFrame {
     public void update( double delta ) {
         push.update(delta);
         pop.update(delta);
+        inputTamanho.update(delta);
         inputPush.update(delta);
+       
         
         //abrir a aba de input
         if(push.isMousePressed()){
@@ -85,8 +91,6 @@ public class Pilha extends EngineFrame {
 
                 topo = elementosPilha[contador];
                 inputPush.hide();
-
-                ponto.y += 20;
                 contador++;
             }else{
                 inputPush.setText("Precisa ser um numero");
@@ -110,6 +114,7 @@ public class Pilha extends EngineFrame {
         pop.draw();
         desenharPilha(contornoPilha, elementosPilha);
         inputPush.draw();
+        inputTamanho.draw();
         
         
         //so desenha o topo se tiver elemento
@@ -132,24 +137,23 @@ public class Pilha extends EngineFrame {
         }
     }
     
-    //Desenha uma pilha de tamanho fixo 10
+    //Desenha a pilha e o contorno dos numeros
     public void desenharPilha(Rectangle contorno, int[] array){
         contorno.draw(this, BLACK);
-        double tamanhoElemento = contorno.height / elementosPilha.length;
+        double tamanhoElemento = contorno.height / array.length;
         
         for(int i = 0; i < contador; i++){
             //Começar desenhando da base da pilha
             double yPos = contorno.y + contorno.height - (i * tamanhoElemento) - tamanhoElemento;
-            double xPos = contorno.x + (contornoPilha.width / 2);
+            double xPos = contorno.x + (contorno.width / 2);
             
             //desenha o numero
             drawText(Integer.toString(elementosPilha[i]), 
-                    new Vector2(xPos - 10, yPos + 10),
-                    20,
-                    BLACK
-                    );
+                    new Vector2(xPos - 10, yPos + 5),
+                    30 - array.length,
+                    BLACK);
             
-            //desenha o contorno da pilha
+            //desenha o contorno do elemento
             drawRectangle(new Rectangle(contorno.x, 
                     yPos,
                     100, tamanhoElemento), BLACK);
@@ -157,9 +161,6 @@ public class Pilha extends EngineFrame {
         
         
         
-        //Rectangle quadrado = new Rectangle(retangulo.x, retangulo.y, 
-        //        100, tamanhoElemento);
-        //quadrado.draw(this, BLACK);
         
     }
     
