@@ -1,6 +1,7 @@
 package template;
 
 import br.com.davidbuzatto.jsge.core.engine.EngineFrame;
+import static br.com.davidbuzatto.jsge.core.engine.EngineFrame.BLACK;
 import br.com.davidbuzatto.jsge.geom.Rectangle;
 import br.com.davidbuzatto.jsge.imgui.GuiButton;
 import br.com.davidbuzatto.jsge.imgui.GuiInputDialog;
@@ -9,9 +10,9 @@ import br.com.davidbuzatto.jsge.math.Vector2;
  *
  * @author BV3043185
  */
-public class Fila extends EngineFrame{
+public class Lista extends EngineFrame{
     
-    private int[] elementosFila;
+    private int[] elementosLista;
     private int tamanho;
     private int inicio;
     private int contador;
@@ -31,7 +32,7 @@ public class Fila extends EngineFrame{
     int y;
     
     
-    public Fila(){
+    public Lista(){
         super(
             800,                 // largura                      / width
             600,                 // algura                       / height
@@ -55,7 +56,7 @@ public class Fila extends EngineFrame{
         tamanhoFontBase = 30;
         tamanhoFontMin = 8;
         
-        elementosFila = new int[tamanho];
+        elementosLista = new int[tamanho];
         
         contornoFila = new Rectangle(x, y, 400, 70);
         
@@ -93,9 +94,9 @@ public class Fila extends EngineFrame{
         //Enqueue
         if(inputEnqueue.isOkButtonPressed() || inputEnqueue.isEnterKeyPressed()){
             if(ehInt(inputEnqueue.getValue())){
-                elementosFila[contador] = Integer.parseInt(inputEnqueue.getValue());
+                elementosLista[contador] = Integer.parseInt(inputEnqueue.getValue());
                 
-                inicio = elementosFila[0];
+                inicio = elementosLista[0];
                 inputEnqueue.hide();
                 contador++;
                 
@@ -107,23 +108,23 @@ public class Fila extends EngineFrame{
         //Dequeue
         if(dequeue.isMousePressed()){
             for(int i = 0; i < tamanho - 1; i++){
-                elementosFila[i] = elementosFila[i + 1]; 
+                elementosLista[i] = elementosLista[i + 1]; 
             }
             
             if(contador > 0){
                 contador--;
             }
             
-            inicio = elementosFila[0];
+            inicio = elementosLista[0];
         }
         
         //clear
         if(clear.isMousePressed()){
-            elementosFila = new int[tamanho];
+            elementosLista = new int[tamanho];
             contador = 0;
             
             //precisa repetir esse codigo p/ atualizar o inicio;
-            inicio = elementosFila[0];
+            inicio = elementosLista[0];
         }
         
         if(mudarTamanho.isMousePressed()){
@@ -138,7 +139,7 @@ public class Fila extends EngineFrame{
                 
                 contador = 0;
                 inputTamanho.hide();
-                elementosFila = new int[Integer.parseInt(inputTamanho.getValue())];
+                elementosLista = new int[Integer.parseInt(inputTamanho.getValue())];
                              
             }else{
                 inputTamanho.setText("Precisa ser um numero");
@@ -154,7 +155,7 @@ public class Fila extends EngineFrame{
     
     @Override
     public void draw(){
-        desenharFila(contornoFila, elementosFila);
+        desenharFila(contornoFila, elementosLista);
         enqueue.draw();
         dequeue.draw();
         clear.draw();
@@ -176,7 +177,7 @@ public class Fila extends EngineFrame{
             double xPos = contorno.x + (contorno.width / tamanhoElemento) * i;
             
             //desenhar o elemento
-            drawText(Integer.toString(elementosFila[i]), 
+            drawText(Integer.toString(elementosLista[i]), 
                     new Vector2(xPos + 10, yPos + 10),
                     tamanhoFont,
                     BLACK);
@@ -199,6 +200,6 @@ public class Fila extends EngineFrame{
     }
     
     public static void main( String[] args ) {
-        new Fila();
+        new Lista();
     }
 }

@@ -1,6 +1,7 @@
 package template;
 
 import br.com.davidbuzatto.jsge.core.engine.EngineFrame;
+import static br.com.davidbuzatto.jsge.core.engine.EngineFrame.BLACK;
 import br.com.davidbuzatto.jsge.geom.Rectangle;
 import br.com.davidbuzatto.jsge.imgui.GuiButton;
 import br.com.davidbuzatto.jsge.imgui.GuiInputDialog;
@@ -9,9 +10,9 @@ import br.com.davidbuzatto.jsge.math.Vector2;
  *
  * @author BV3043185
  */
-public class Fila extends EngineFrame{
+public class Deque extends EngineFrame{
     
-    private int[] elementosFila;
+    private int[] elementosDeque;
     private int tamanho;
     private int inicio;
     private int contador;
@@ -23,19 +24,21 @@ public class Fila extends EngineFrame{
     private GuiInputDialog inputTamanho;
     private GuiInputDialog inputEnqueue;
     private GuiButton mudarTamanho;
-    private GuiButton enqueue;
-    private GuiButton dequeue;
+    private GuiButton addFirst;
+    private GuiButton addLast;
+    private GuiButton removeFirst;
+    private GuiButton removeLast;
     private GuiButton clear;
     
     int x;
     int y;
     
     
-    public Fila(){
+    public Deque(){
         super(
             800,                 // largura                      / width
             600,                 // algura                       / height
-            "Fila",             // título                       / title
+            "Deque",             // título                       / title
             60,                  // quadros por segundo desejado / target FPS
             true,                // suavização                   / antialiasing
             false,               // redimensionável              / resizable
@@ -55,14 +58,16 @@ public class Fila extends EngineFrame{
         tamanhoFontBase = 30;
         tamanhoFontMin = 8;
         
-        elementosFila = new int[tamanho];
+        elementosDeque = new int[tamanho];
         
         contornoFila = new Rectangle(x, y, 400, 70);
         
-        enqueue = new GuiButton(x + 40, y - 200, 100, 70, "ENQUEUE", this);
-        dequeue = new GuiButton(x + 260, y - 200, 100, 70, "DEQUEUE", this);
-        mudarTamanho = new GuiButton(x + 40, y - 120, 100, 40, "Mudar tamanho", this);
-        clear = new GuiButton(x + 260 , y - 120 , 100, 40, "Clear", this);
+        addFirst = new GuiButton(x, y - 100, 100, 50, "add First", this);
+        removeFirst = new GuiButton(x, y - 40, 100, 30, "remove First", this);
+        addLast = new GuiButton(x + 300, y - 100, 100, 50, "add Last", this);
+        removeLast = new GuiButton(x + 300, y - 40, 100, 30, "remove Last", this);
+        mudarTamanho = new GuiButton(x + 150, y - 40, 100, 30, "Mudar tamanho", this);
+        clear = new GuiButton(x + 150 , y - 100 , 100, 50, "Clear", this);
         
         inputEnqueue = new GuiInputDialog("Inserir dados",
                 "Insira um elemento na fila",
@@ -74,14 +79,16 @@ public class Fila extends EngineFrame{
     
     @Override
     public void update( double delta ){
-        enqueue.update(delta);
-        dequeue.update(delta);
+        addFirst.update(delta);
+        removeFirst.update(delta);
+        addLast.update(delta);
+        removeLast.update(delta);
         mudarTamanho.update(delta);
         clear.update(delta);
         inputTamanho.update(delta);
         inputEnqueue.update(delta);
         
-        if(enqueue.isMousePressed()){
+        if(addFirst.isMousePressed()){
             inputEnqueue.show();
         }
         
@@ -93,9 +100,9 @@ public class Fila extends EngineFrame{
         //Enqueue
         if(inputEnqueue.isOkButtonPressed() || inputEnqueue.isEnterKeyPressed()){
             if(ehInt(inputEnqueue.getValue())){
-                elementosFila[contador] = Integer.parseInt(inputEnqueue.getValue());
+                elementosDeque[contador] = Integer.parseInt(inputEnqueue.getValue());
                 
-                inicio = elementosFila[0];
+                inicio = elementosDeque[0];
                 inputEnqueue.hide();
                 contador++;
                 
@@ -104,26 +111,31 @@ public class Fila extends EngineFrame{
             }
         }
         
-        //Dequeue
-        if(dequeue.isMousePressed()){
+        //Remove first
+        if(removeFirst.isMousePressed()){
             for(int i = 0; i < tamanho - 1; i++){
-                elementosFila[i] = elementosFila[i + 1]; 
+                elementosDeque[i] = elementosDeque[i + 1]; 
             }
             
             if(contador > 0){
                 contador--;
             }
             
-            inicio = elementosFila[0];
+            inicio = elementosDeque[0];
+        }
+        
+        //Remove last
+        if(removeLast.isMousePressed()){
+            elementosDeque[contador] = 0;
         }
         
         //clear
         if(clear.isMousePressed()){
-            elementosFila = new int[tamanho];
+            elementosDeque = new int[tamanho];
             contador = 0;
             
             //precisa repetir esse codigo p/ atualizar o inicio;
-            inicio = elementosFila[0];
+            inicio = elementosDeque[0];
         }
         
         if(mudarTamanho.isMousePressed()){
@@ -138,7 +150,7 @@ public class Fila extends EngineFrame{
                 
                 contador = 0;
                 inputTamanho.hide();
-                elementosFila = new int[Integer.parseInt(inputTamanho.getValue())];
+                elementosDeque = new int[Integer.parseInt(inputTamanho.getValue())];
                              
             }else{
                 inputTamanho.setText("Precisa ser um numero");
@@ -147,26 +159,27 @@ public class Fila extends EngineFrame{
         
         if(inputTamanho.isCloseButtonPressed()){
             inputTamanho.hide();
-        }      
+        }
         
         
     }
     
     @Override
     public void draw(){
-        desenharFila(contornoFila, elementosFila);
-        enqueue.draw();
-        dequeue.draw();
+        desenharDeque(contornoFila, elementosDeque);
+        addFirst.draw();
+        removeFirst.draw();
+        addLast.draw();
+        removeLast.draw();
         clear.draw();
         mudarTamanho.draw();
         inputTamanho.draw();
         inputEnqueue.draw();
         
-        drawText("Início: " + inicio, 330, 500, 30, BLACK);
      
     }
     
-    public void desenharFila(Rectangle contorno, int[] array){
+    public void desenharDeque(Rectangle contorno, int[] array){
         contorno.draw(this, BLACK);
         double tamanhoElemento = array.length;
         int tamanhoFont = Math.max(tamanhoFontBase - array.length,  tamanhoFontMin);
@@ -176,7 +189,7 @@ public class Fila extends EngineFrame{
             double xPos = contorno.x + (contorno.width / tamanhoElemento) * i;
             
             //desenhar o elemento
-            drawText(Integer.toString(elementosFila[i]), 
+            drawText(Integer.toString(elementosDeque[i]), 
                     new Vector2(xPos + 10, yPos + 10),
                     tamanhoFont,
                     BLACK);
@@ -199,6 +212,6 @@ public class Fila extends EngineFrame{
     }
     
     public static void main( String[] args ) {
-        new Fila();
+        new Deque();
     }
 }
