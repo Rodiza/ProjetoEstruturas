@@ -100,6 +100,7 @@ public class Fila extends EngineFrame{
                 contador++;
                 
             }else{
+                inputEnqueue.setTitleBarBackgroundColor(RED);
                 inputEnqueue.setText("Precisa ser um numero");
             }
         }
@@ -141,6 +142,7 @@ public class Fila extends EngineFrame{
                 elementosFila = new int[Integer.parseInt(inputTamanho.getValue())];
                              
             }else{
+                inputTamanho.setTitleBarBackgroundColor(RED);
                 inputTamanho.setText("Precisa ser um numero");
             }
         }

@@ -13,15 +13,16 @@ import br.com.davidbuzatto.jsge.math.Vector2;
 public class Lista extends EngineFrame{
     
     private int[] elementosLista;
-    private boolean[] desenharOuNao;
+    private boolean[] temElemento;
     //desenharOuNao serve como um array paralelo ao elementosLista
-    //que vai dizer se o elemento deve ser desenhado ou nao(duh)
+    //que vai dizer se um elemento foi ou nao inserido nessa posicao
     private boolean desenhar;
     
     private int tamanho;
     private int inicio;
     private int fim;
     private int indiceUltimo;
+    private int indiceAdd;
     private int tamanhoFontBase;
     private int tamanhoFontMin;
     
@@ -29,6 +30,8 @@ public class Lista extends EngineFrame{
     
     private GuiInputDialog inputTamanho;
     private GuiInputDialog inputAdd;
+    private GuiInputDialog inputAddIndice;
+    private GuiInputDialog inputRemove;
     
     private GuiButton mudarTamanho;
     private GuiButton add;
@@ -43,7 +46,7 @@ public class Lista extends EngineFrame{
         super(
             800,                 // largura                      / width
             600,                 // algura                       / height
-            "Deque",             // título                       / title
+            "Lista",             // título                       / title
             60,                  // quadros por segundo desejado / target FPS
             true,                // suavização                   / antialiasing
             false,               // redimensionável              / resizable
@@ -66,7 +69,7 @@ public class Lista extends EngineFrame{
         tamanhoFontMin = 8;
         
         elementosLista = new int[tamanho];
-        desenharOuNao = new boolean[tamanho];
+        temElemento = new boolean[tamanho];
         
         contornoFila = new Rectangle(x, y, 600, 70);
         
@@ -75,12 +78,20 @@ public class Lista extends EngineFrame{
         mudarTamanho = new GuiButton(x + 150, y - 40, 100, 30, "Mudar tamanho", this);
         clear = new GuiButton(x + 150 , y - 100 , 100, 50, "Clear", this);
         
+        inputAddIndice = new GuiInputDialog("Inserir índice",
+                "Insira o índice",
+                "Cancelar", true, this);
+        
         inputAdd = new GuiInputDialog("Inserir dados",
-                "Insira um elemento no inicio",
+                "Insira um elemento",
                 "Cancelar", true, this);
  
         inputTamanho = new GuiInputDialog("Inserir tamanho", 
                 "Insira o tamanho da fila",
+                "Cancelar", true, this);
+        
+        inputRemove = new GuiInputDialog("Inserir indice",
+                "insira o indice a ser removido",
                 "Cancelar", true, this);
         
     }
@@ -92,10 +103,12 @@ public class Lista extends EngineFrame{
         mudarTamanho.update(delta);
         clear.update(delta);
         inputTamanho.update(delta);
+        inputAddIndice.update(delta);
         inputAdd.update(delta);
+        inputRemove.update(delta);
         
         if(add.isMousePressed()){
-            inputAdd.show(280, 100);
+            inputAddIndice.show(280, 100);
         }
         
         /* teste
@@ -104,6 +117,37 @@ public class Lista extends EngineFrame{
         }else{
             desenhar = false;
         }*/
+        
+        
+        //escolher o indice
+        if(inputAddIndice.isOkButtonPressed() || inputAddIndice.isEnterKeyPressed()){
+            String valorInserido = inputAddIndice.getValue();
+            
+            if(ehInt(valorInserido)){
+                
+                int indice = Integer.parseInt(valorInserido);
+                boolean ehIndiceValido = indice < tamanho && indice >= 0;
+                
+                if(ehIndiceValido){
+                   
+                    indiceAdd = Integer.parseInt(inputAddIndice.getValue());
+                    inputAddIndice.hide();
+                    inputAdd.show(280, 100);
+                    indiceAdd = indice;
+                    
+                } else{
+                    inputAddIndice.setTitleBarBackgroundColor(RED);
+                    inputAddIndice.setText("Esse índice não existe");
+                }  
+            } else{
+                inputAddIndice.setTitleBarBackgroundColor(RED);
+                inputAddIndice.setText("Precisa ser um numero");
+            }
+        }
+        
+        if ( inputAddIndice.isCloseButtonPressed() || inputAddIndice.isCancelButtonPressed() ) {
+            inputAddIndice.hide();
+        }
     
         if ( inputAdd.isCloseButtonPressed() || inputAdd.isCancelButtonPressed() ) {
             inputAdd.hide();
@@ -114,36 +158,45 @@ public class Lista extends EngineFrame{
         if(inputAdd.isOkButtonPressed() || inputAdd.isEnterKeyPressed()){
             if(ehInt(inputAdd.getValue())){
                 
-                if(indiceUltimo < tamanho){
-                    
-                    for(int i = indiceUltimo; i >= 0; i--){
-                        elementosLista[i + 1] = elementosLista[i];
-                    }
-                    
-                    elementosLista[0] = Integer.parseInt(inputAdd.getValue());                  
-                    inicio = elementosLista[0];
-                    fim = elementosLista[indiceUltimo];
-                    indiceUltimo++;
-                    inputAdd.hide();
-                    
-                }
+               elementosLista[indiceAdd] = Integer.parseInt(inputAdd.getValue());
+               temElemento[indiceAdd] = true;
+               inputAdd.hide();
+               
             } else{
-                inputAdd.setText("Precisa ser um numero");
+                inputAdd.setTitleBarBackgroundColor(RED);
+                inputAdd.setText("Precisa ser um número");
             }
         }
         
-        //Remove
         if(remove.isMousePressed()){
-            for(int i = 0; i < tamanho - 1; i++){
-                elementosLista[i] = elementosLista[i + 1]; 
-            }
+            inputRemove.show();
+        }
+        
+        //Remove
+        if(inputRemove.isOkButtonPressed() || inputRemove.isEnterKeyPressed()){
+            String valorInserido = inputRemove.getValue();
             
-            if(indiceUltimo > 0){
-                indiceUltimo--;
+            if(ehInt(valorInserido)){
+                int indice = Integer.parseInt(valorInserido);
+                boolean ehIndiceValido = indice <= tamanho && indice >= 0;
+                
+                if(ehIndiceValido && temElemento[indice]){
+                    temElemento[indice] = false;
+                    elementosLista[indice] = 0;
+                    inputRemove.hide();
+                } else{
+                    inputRemove.setTitleBarBackgroundColor(RED);
+                    inputRemove.setText("Índice inválido");
+                }
+                
+            } else{
+                inputRemove.setTitleBarBackgroundColor(RED);
+                inputRemove.setText("Precisa ser um número");
             }
-            
-            inicio = elementosLista[0];
-            fim = elementosLista[indiceUltimo];
+        }
+        
+        if ( inputRemove.isCloseButtonPressed() || inputRemove.isCancelButtonPressed() ) {
+            inputRemove.hide();
         }
         
         
@@ -163,20 +216,22 @@ public class Lista extends EngineFrame{
         
         //inputTamanho
         if(inputTamanho.isOkButtonPressed() || inputTamanho.isEnterKeyPressed()){
-            tamanho = Integer.parseInt(inputTamanho.getValue());
             
-            if(ehInt(inputTamanho.getValue())){
+            
+            if(ehInt(inputTamanho.getValue()) && Integer.parseInt(inputTamanho.getValue()) > 0){
                 
-                indiceUltimo = 0;
+                tamanho = Integer.parseInt(inputTamanho.getValue());
+                temElemento = new boolean[tamanho];
                 inputTamanho.hide();
                 elementosLista = new int[Integer.parseInt(inputTamanho.getValue())];
                              
             }else{
-                inputTamanho.setText("Precisa ser um numero");
+                inputTamanho.setTitleBarBackgroundColor(RED);
+                inputTamanho.setText("Número inválido");
             }
         }
         
-        if(inputTamanho.isCloseButtonPressed()){
+        if(inputTamanho.isCloseButtonPressed() || inputTamanho.isCancelButtonPressed()){
             inputTamanho.hide();
         }
         
@@ -185,20 +240,22 @@ public class Lista extends EngineFrame{
     
     @Override
     public void draw(){
-        desenharDeque(contornoFila, elementosLista);
+        desenharLista(contornoFila, elementosLista);
         add.draw();
         remove.draw();
         clear.draw();
         mudarTamanho.draw();
         inputTamanho.draw();
         inputAdd.draw();
+        inputRemove.draw();
+        inputAddIndice.draw();
         /*if(desenhar){
             add.draw();
         }*/
      
     }
     
-    public void desenharDeque(Rectangle contorno, int[] array){
+    public void desenharLista(Rectangle contorno, int[] array){
         contorno.draw(this, BLACK);
         double tamanhoElemento = array.length;
         int tamanhoFont = Math.max(tamanhoFontBase - array.length,  tamanhoFontMin);
@@ -208,11 +265,12 @@ public class Lista extends EngineFrame{
             double xPos = contorno.x + (contorno.width / tamanhoElemento) * i;
             
             //desenhar o elemento
-            drawText(Integer.toString(elementosLista[i]), 
-                    new Vector2(xPos + 10, yPos + 10),
-                    tamanhoFont,
-                    BLACK);
-            
+            if(temElemento[i]){
+                drawText(Integer.toString(elementosLista[i]), 
+                        new Vector2(xPos + 10, yPos + 10),
+                        tamanhoFont,
+                        BLACK);
+            }
             //desenha o contorno do elemento
             drawRectangle(new Rectangle(xPos, 
                     yPos,

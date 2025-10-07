@@ -129,6 +129,7 @@ public class Deque extends EngineFrame{
                 indiceUltimo++;
                 
             }else{
+                inputAddLast.setTitleBarBackgroundColor(RED);
                 inputAddLast.setText("Precisa ser um numero");
             }
         }
@@ -151,6 +152,7 @@ public class Deque extends EngineFrame{
                     
                 }
             } else{
+                inputAddLast.setTitleBarBackgroundColor(RED);
                 inputAddLast.setText("Precisa ser um numero");
             }
         }
@@ -205,6 +207,7 @@ public class Deque extends EngineFrame{
                 elementosDeque = new int[Integer.parseInt(inputTamanho.getValue())];
                              
             }else{
+                inputTamanho.setTitleBarBackgroundColor(RED);
                 inputTamanho.setText("Precisa ser um numero");
             }
         }
