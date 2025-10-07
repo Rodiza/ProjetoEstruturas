@@ -13,19 +13,26 @@ import br.com.davidbuzatto.jsge.math.Vector2;
 public class Lista extends EngineFrame{
     
     private int[] elementosLista;
+    private boolean[] desenharOuNao;
+    //desenharOuNao serve como um array paralelo ao elementosLista
+    //que vai dizer se o elemento deve ser desenhado ou nao(duh)
+    private boolean desenhar;
+    
     private int tamanho;
     private int inicio;
-    private int contador;
+    private int fim;
+    private int indiceUltimo;
     private int tamanhoFontBase;
     private int tamanhoFontMin;
     
     private Rectangle contornoFila;
     
     private GuiInputDialog inputTamanho;
-    private GuiInputDialog inputEnqueue;
+    private GuiInputDialog inputAdd;
+    
     private GuiButton mudarTamanho;
-    private GuiButton enqueue;
-    private GuiButton dequeue;
+    private GuiButton add;
+    private GuiButton remove;
     private GuiButton clear;
     
     int x;
@@ -36,7 +43,7 @@ public class Lista extends EngineFrame{
         super(
             800,                 // largura                      / width
             600,                 // algura                       / height
-            "Fila",             // título                       / title
+            "Deque",             // título                       / title
             60,                  // quadros por segundo desejado / target FPS
             true,                // suavização                   / antialiasing
             false,               // redimensionável              / resizable
@@ -49,82 +56,105 @@ public class Lista extends EngineFrame{
     
     @Override
     public void create() { 
-        x = 200;
+        x = 100;
         y = 400;
-        contador = 0;
+        indiceUltimo = 0;
         tamanho = 10; //valor padrao, pode ser mudado
+        inicio = 0;
+        fim = 0;
         tamanhoFontBase = 30;
         tamanhoFontMin = 8;
         
         elementosLista = new int[tamanho];
+        desenharOuNao = new boolean[tamanho];
         
-        contornoFila = new Rectangle(x, y, 400, 70);
+        contornoFila = new Rectangle(x, y, 600, 70);
         
-        enqueue = new GuiButton(x + 40, y - 200, 100, 70, "ENQUEUE", this);
-        dequeue = new GuiButton(x + 260, y - 200, 100, 70, "DEQUEUE", this);
-        mudarTamanho = new GuiButton(x + 40, y - 120, 100, 40, "Mudar tamanho", this);
-        clear = new GuiButton(x + 260 , y - 120 , 100, 40, "Clear", this);
+        add = new GuiButton(x, y - 100, 100, 50, "Add", this);
+        remove = new GuiButton(x, y - 40, 100, 30, "Remove", this);
+        mudarTamanho = new GuiButton(x + 150, y - 40, 100, 30, "Mudar tamanho", this);
+        clear = new GuiButton(x + 150 , y - 100 , 100, 50, "Clear", this);
         
-        inputEnqueue = new GuiInputDialog("Inserir dados",
-                "Insira um elemento na fila",
+        inputAdd = new GuiInputDialog("Inserir dados",
+                "Insira um elemento no inicio",
                 "Cancelar", true, this);
+ 
         inputTamanho = new GuiInputDialog("Inserir tamanho", 
                 "Insira o tamanho da fila",
                 "Cancelar", true, this);
+        
     }
     
     @Override
     public void update( double delta ){
-        enqueue.update(delta);
-        dequeue.update(delta);
+        add.update(delta);
+        remove.update(delta);
         mudarTamanho.update(delta);
         clear.update(delta);
         inputTamanho.update(delta);
-        inputEnqueue.update(delta);
+        inputAdd.update(delta);
         
-        if(enqueue.isMousePressed()){
-            inputEnqueue.show();
+        if(add.isMousePressed()){
+            inputAdd.show(280, 100);
         }
         
-        if ( inputEnqueue.isCloseButtonPressed() ) {
-            inputEnqueue.hide();
+        /* teste
+        if(add.isMouseOver()){
+            desenhar = true;
+        }else{
+            desenhar = false;
+        }*/
+    
+        if ( inputAdd.isCloseButtonPressed() || inputAdd.isCancelButtonPressed() ) {
+            inputAdd.hide();
         }
         
-
-        //Enqueue
-        if(inputEnqueue.isOkButtonPressed() || inputEnqueue.isEnterKeyPressed()){
-            if(ehInt(inputEnqueue.getValue())){
-                elementosLista[contador] = Integer.parseInt(inputEnqueue.getValue());
+        
+        //Add
+        if(inputAdd.isOkButtonPressed() || inputAdd.isEnterKeyPressed()){
+            if(ehInt(inputAdd.getValue())){
                 
-                inicio = elementosLista[0];
-                inputEnqueue.hide();
-                contador++;
-                
-            }else{
-                inputEnqueue.setText("Precisa ser um numero");
+                if(indiceUltimo < tamanho){
+                    
+                    for(int i = indiceUltimo; i >= 0; i--){
+                        elementosLista[i + 1] = elementosLista[i];
+                    }
+                    
+                    elementosLista[0] = Integer.parseInt(inputAdd.getValue());                  
+                    inicio = elementosLista[0];
+                    fim = elementosLista[indiceUltimo];
+                    indiceUltimo++;
+                    inputAdd.hide();
+                    
+                }
+            } else{
+                inputAdd.setText("Precisa ser um numero");
             }
         }
         
-        //Dequeue
-        if(dequeue.isMousePressed()){
+        //Remove
+        if(remove.isMousePressed()){
             for(int i = 0; i < tamanho - 1; i++){
                 elementosLista[i] = elementosLista[i + 1]; 
             }
             
-            if(contador > 0){
-                contador--;
+            if(indiceUltimo > 0){
+                indiceUltimo--;
             }
             
             inicio = elementosLista[0];
+            fim = elementosLista[indiceUltimo];
         }
+        
         
         //clear
         if(clear.isMousePressed()){
             elementosLista = new int[tamanho];
-            contador = 0;
+            indiceUltimo = 0;
             
             //precisa repetir esse codigo p/ atualizar o inicio;
             inicio = elementosLista[0];
+            fim = elementosLista[0];
         }
         
         if(mudarTamanho.isMousePressed()){
@@ -137,7 +167,7 @@ public class Lista extends EngineFrame{
             
             if(ehInt(inputTamanho.getValue())){
                 
-                contador = 0;
+                indiceUltimo = 0;
                 inputTamanho.hide();
                 elementosLista = new int[Integer.parseInt(inputTamanho.getValue())];
                              
@@ -148,31 +178,32 @@ public class Lista extends EngineFrame{
         
         if(inputTamanho.isCloseButtonPressed()){
             inputTamanho.hide();
-        }      
+        }
         
         
     }
     
     @Override
     public void draw(){
-        desenharFila(contornoFila, elementosLista);
-        enqueue.draw();
-        dequeue.draw();
+        desenharDeque(contornoFila, elementosLista);
+        add.draw();
+        remove.draw();
         clear.draw();
         mudarTamanho.draw();
         inputTamanho.draw();
-        inputEnqueue.draw();
-        
-        drawText("Início: " + inicio, 330, 500, 30, BLACK);
+        inputAdd.draw();
+        /*if(desenhar){
+            add.draw();
+        }*/
      
     }
     
-    public void desenharFila(Rectangle contorno, int[] array){
+    public void desenharDeque(Rectangle contorno, int[] array){
         contorno.draw(this, BLACK);
         double tamanhoElemento = array.length;
         int tamanhoFont = Math.max(tamanhoFontBase - array.length,  tamanhoFontMin);
         
-        for(int i = 0; i < contador; i++){
+        for(int i = 0; i < tamanho; i++){
             double yPos = contorno.y;
             double xPos = contorno.x + (contorno.width / tamanhoElemento) * i;
             

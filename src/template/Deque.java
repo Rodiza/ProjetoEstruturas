@@ -13,9 +13,11 @@ import br.com.davidbuzatto.jsge.math.Vector2;
 public class Deque extends EngineFrame{
     
     private int[] elementosDeque;
+    
     private int tamanho;
     private int inicio;
-    private int contador;
+    private int fim;
+    private int indiceUltimo;
     private int tamanhoFontBase;
     private int tamanhoFontMin;
     
@@ -24,6 +26,7 @@ public class Deque extends EngineFrame{
     private GuiInputDialog inputTamanho;
     private GuiInputDialog inputAddFirst;
     private GuiInputDialog inputAddLast;
+    
     private GuiButton mudarTamanho;
     private GuiButton addFirst;
     private GuiButton addLast;
@@ -54,8 +57,10 @@ public class Deque extends EngineFrame{
     public void create() { 
         x = 200;
         y = 400;
-        contador = 0;
+        indiceUltimo = 0;
         tamanho = 10; //valor padrao, pode ser mudado
+        inicio = 0;
+        fim = 0;
         tamanhoFontBase = 30;
         tamanhoFontMin = 8;
         
@@ -82,6 +87,7 @@ public class Deque extends EngineFrame{
         inputTamanho = new GuiInputDialog("Inserir tamanho", 
                 "Insira o tamanho da fila",
                 "Cancelar", true, this);
+        
     }
     
     @Override
@@ -97,32 +103,33 @@ public class Deque extends EngineFrame{
         inputAddLast.update(delta);
         
         if(addFirst.isMousePressed()){
-            inputAddFirst.show();
+            inputAddFirst.show(280, 100);
         }
         
         if(addLast.isMousePressed()){
-            inputAddLast.show();
+            inputAddLast.show(280, 100);
         }
         
-        if ( inputAddFirst.isCloseButtonPressed() ) {
+        if ( inputAddFirst.isCloseButtonPressed() || inputAddFirst.isCancelButtonPressed() ) {
             inputAddFirst.hide();
         }
         
-        if(inputAddLast.isCloseButtonPressed()){
+        if(inputAddLast.isCloseButtonPressed() || inputAddLast.isCancelButtonPressed()){
             inputAddLast.hide();
         }
 
         //Add Last
         if(inputAddLast.isOkButtonPressed() || inputAddLast.isEnterKeyPressed()){
-            if(ehInt(inputAddFirst.getValue())){
-                elementosDeque[contador] = Integer.parseInt(inputAddFirst.getValue());
+            if(ehInt(inputAddLast.getValue())){
+                elementosDeque[indiceUltimo] = Integer.parseInt(inputAddLast.getValue());
                 
                 inicio = elementosDeque[0];
-                inputAddFirst.hide();
-                contador++;
+                fim = elementosDeque[indiceUltimo];
+                inputAddLast.hide();
+                indiceUltimo++;
                 
             }else{
-                inputAddFirst.setText("Precisa ser um numero");
+                inputAddLast.setText("Precisa ser um numero");
             }
         }
         
@@ -130,34 +137,57 @@ public class Deque extends EngineFrame{
         if(inputAddFirst.isOkButtonPressed() || inputAddFirst.isEnterKeyPressed()){
             if(ehInt(inputAddFirst.getValue())){
                 
+                if(indiceUltimo < tamanho){
+                    
+                    for(int i = indiceUltimo; i >= 0; i--){
+                        elementosDeque[i + 1] = elementosDeque[i];
+                    }
+                    
+                    elementosDeque[0] = Integer.parseInt(inputAddFirst.getValue());                  
+                    inicio = elementosDeque[0];
+                    fim = elementosDeque[indiceUltimo];
+                    indiceUltimo++;
+                    inputAddFirst.hide();
+                    
+                }
+            } else{
+                inputAddLast.setText("Precisa ser um numero");
             }
         }
         
-        //Remove first
+        //Remove First
         if(removeFirst.isMousePressed()){
             for(int i = 0; i < tamanho - 1; i++){
                 elementosDeque[i] = elementosDeque[i + 1]; 
             }
             
-            if(contador > 0){
-                contador--;
+            if(indiceUltimo > 0){
+                indiceUltimo--;
             }
             
             inicio = elementosDeque[0];
+            fim = elementosDeque[indiceUltimo];
         }
         
-        //Remove last
+        //Remove Last
         if(removeLast.isMousePressed()){
-            elementosDeque[contador] = 0;
+            if(indiceUltimo > 0){
+                indiceUltimo--;
+                fim = elementosDeque[indiceUltimo];
+            }else{
+                inicio = elementosDeque[0];
+                
+            }
         }
         
         //clear
         if(clear.isMousePressed()){
             elementosDeque = new int[tamanho];
-            contador = 0;
+            indiceUltimo = 0;
             
             //precisa repetir esse codigo p/ atualizar o inicio;
             inicio = elementosDeque[0];
+            fim = elementosDeque[0];
         }
         
         if(mudarTamanho.isMousePressed()){
@@ -170,7 +200,7 @@ public class Deque extends EngineFrame{
             
             if(ehInt(inputTamanho.getValue())){
                 
-                contador = 0;
+                indiceUltimo = 0;
                 inputTamanho.hide();
                 elementosDeque = new int[Integer.parseInt(inputTamanho.getValue())];
                              
@@ -199,6 +229,8 @@ public class Deque extends EngineFrame{
         inputAddFirst.draw();
         inputAddLast.draw();
         
+        drawText("Inicio: " + inicio + "\n fim: " + fim,
+                200, 300, BLACK);
      
     }
     
@@ -207,7 +239,7 @@ public class Deque extends EngineFrame{
         double tamanhoElemento = array.length;
         int tamanhoFont = Math.max(tamanhoFontBase - array.length,  tamanhoFontMin);
         
-        for(int i = 0; i < contador; i++){
+        for(int i = 0; i < indiceUltimo; i++){
             double yPos = contorno.y;
             double xPos = contorno.x + (contorno.width / tamanhoElemento) * i;
             
