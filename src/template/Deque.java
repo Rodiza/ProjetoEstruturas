@@ -233,7 +233,7 @@ public class Deque extends EngineFrame{
         inputAddLast.draw();
         
         drawText("Inicio: " + inicio + "\n fim: " + fim,
-                200, 300, BLACK);
+                320, 500, 30, BLACK);
      
     }
     
@@ -271,5 +271,9 @@ public class Deque extends EngineFrame{
     
     public static void main( String[] args ) {
         new Deque();
+    }
+
+    private void setDefaultFont(String FONT_SANS_SERIF) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

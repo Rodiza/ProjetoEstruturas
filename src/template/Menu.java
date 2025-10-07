@@ -13,6 +13,7 @@ public class Menu extends javax.swing.JFrame {
      */
     public Menu() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -40,28 +41,47 @@ public class Menu extends javax.swing.JFrame {
 
         jLabel3.setText("Visualizador de Estruturas de Dados");
 
+        btnPilha.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         btnPilha.setText("Pilha");
+        btnPilha.setBorder(null);
+        btnPilha.setBorderPainted(false);
+        btnPilha.setContentAreaFilled(false);
+        btnPilha.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPilha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPilhaActionPerformed(evt);
             }
         });
 
+        btnFila.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         btnFila.setText("Fila");
+        btnFila.setBorder(null);
+        btnFila.setBorderPainted(false);
+        btnFila.setContentAreaFilled(false);
+        btnFila.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnFila.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFilaActionPerformed(evt);
             }
         });
 
+        btnDeque.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         btnDeque.setText("Deque");
+        btnDeque.setBorder(null);
+        btnDeque.setBorderPainted(false);
+        btnDeque.setContentAreaFilled(false);
+        btnDeque.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnDeque.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDequeActionPerformed(evt);
             }
         });
 
+        btnLista.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
         btnLista.setText("Lista");
+        btnLista.setBorder(null);
+        btnLista.setContentAreaFilled(false);
+        btnLista.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnListaActionPerformed(evt);
@@ -98,15 +118,15 @@ public class Menu extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
+                .addGap(46, 46, 46)
                 .addComponent(btnPilha, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(38, 38, 38)
                 .addComponent(btnFila, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(33, 33, 33)
                 .addComponent(btnDeque, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(37, 37, 37)
                 .addComponent(btnLista, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 243, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
